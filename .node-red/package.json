@@ -1,0 +1,12 @@
+{
+  "name": "node-red-project",
+  "description": "A Node-RED Project",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+      "bcryptjs": "^2.4.3",
+      "Blob": "^0.10.0",
+      "jsonwebtoken": "^9.0.2",
+      "require": "^2.4.20"
+  }
+}

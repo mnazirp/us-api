@@ -1,0 +1,12 @@
+# NodeRED Runtime
+.node-red/.config.*.json
+.node-red/.sessions.json
+.node-red/*.backup
+.node-red/projects
+.node-red/flows_cred.json
+.vscode
+
+# Local files
+local*.sh
+node_modules
+.env
