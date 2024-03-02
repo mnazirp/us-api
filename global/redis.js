@@ -6,10 +6,14 @@ const client = redis.createClient({
 });
 if (!client.isOpen) client.connect()
   .then(() => console.log('connected to redis'))
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error(err);
+    client.disconnect();
+  });
 
 async function commands(commands) {
   try {
+    if(!client.isOpen) throw new Error('Redis is not connected');
     let rs = [];
     for (let i = 0; i < commands.length; i++) {
       let data = await client.sendCommand(commands[i]);
@@ -32,6 +36,7 @@ async function commands(commands) {
 
 async function checkKey(key) {
   try {
+    if(!client.isOpen) throw new Error('Redis is not connected');
     let rs = await client.sendCommand(['KEYS', key]);
     return {
       success: true,
@@ -50,6 +55,7 @@ async function checkKey(key) {
 
 async function checkKeys(keys) {
   try {
+    if(!client.isOpen) throw new Error('Redis is not connected');
     let rs = [];
     for (let i = 0; i < keys.length; i++) {
       let data = await client.sendCommand(['KEYS', keys[i]]);

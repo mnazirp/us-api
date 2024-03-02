@@ -7,10 +7,14 @@ const client = redis.createClient({
 
 if (!client.isOpen) client.connect()
   .then(() => console.log('connected to redisTS'))
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error(err);
+    client.disconnect();
+  });
 
 async function commands(commands) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (let i = 0; i < commands.length; i++) {
       try {
@@ -38,6 +42,7 @@ async function commands(commands) {
 
 async function tsCreate(payloads) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (const payload of payloads) {
       let duplicateOptions = ['BLOCK', 'FIRST', 'LAST', 'MIN', 'MAX', 'SUM'];
@@ -82,6 +87,7 @@ async function tsCreate(payloads) {
 
 async function tsMgetByTopics(topics) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (let i = 0; i < topics.length; i++) {
       try {
@@ -112,6 +118,7 @@ async function tsMgetByTopics(topics) {
 
 async function tsMrangeFilter(filters) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (let i = 0; i < filters.length; i++) {
       try {
@@ -142,6 +149,7 @@ async function tsMrangeFilter(filters) {
 
 async function mrangeByTopics(topics, start = '-', end = '+') {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (let i = 0; i < topics.length; i++) {
       try {
@@ -172,6 +180,7 @@ async function mrangeByTopics(topics, start = '-', end = '+') {
 
 async function checkKey(key) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = await client.sendCommand(['KEYS', key]);
     return {
       success: true,
@@ -191,6 +200,7 @@ async function checkKey(key) {
 
 async function checkKeys(keys) {
   try {
+    if(!client.isOpen) throw new Error('RedisTS is not connected');
     let rs = [];
     for (let i = 0; i < keys.length; i++) {
       try {
