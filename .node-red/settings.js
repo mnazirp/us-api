@@ -74,6 +74,11 @@ module.exports = {
   functionExternalModules: true,
   functionGlobalContext: {
     NODE_TLS_REJECT_UNAUTHORIZED: 0,
+    redis: require('../global/redis'),
+    redisTS: require('../global/redis-ts'),
+    couchdb: require('../global/couchdb'),
+    worker: require('worker_threads'),
+    zlib: require('zlib'),
   },
   debugMaxLength: 1000,
   mqttReconnectTime: 15000,
