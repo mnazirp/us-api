@@ -1,13 +1,17 @@
 require('dotenv').config();
 const nano = require('nano');
 
-const couch = nano({
-  url: process.env.DOCS_MASTER,
-  requestDefaults: {
-    rejeceUnauthorized: false
-  }
-});
-const contex = 'couchdb'
+try {
+  const couch = nano({
+    url: process.env.DOCS_MASTER,
+    requestDefaults: {
+      rejeceUnauthorized: false
+    }
+  });
+  const contex = 'couchdb'
+} catch (err) {
+  console.log(err);
+}
 
 async function openByID(database, _id) {
   try {
