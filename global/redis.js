@@ -4,8 +4,9 @@ const redis = require('redis');
 const client = redis.createClient({
   url: process.env.REDIS_URL
 });
-if (!client.isOpen) client.connect().catch(err => console.error(err));
-if (client.isOpen) console.log('connected to redis-ts');
+if (!client.isOpen) client.connect()
+  .then(() => console.log('connected to redis'))
+  .catch(err => console.error(err));
 
 async function commands(commands) {
   try {
