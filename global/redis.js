@@ -36,8 +36,9 @@ async function commands(commands) {
   } catch (err) {
     throw {
       success: false,
+      context: 'redis',
       func: 'commands',
-      message: err
+      message: err.toString()
     };
   }
 }
@@ -55,6 +56,7 @@ async function checkKey(key) {
   } catch (err) {
     throw {
       success: false,
+      context: 'redis',
       func: 'checkKey',
       message: err
     };
@@ -81,6 +83,7 @@ async function checkKeys(keys) {
   } catch (err) {
     throw {
       success: false,
+      context: 'redis',
       func: 'checkKeys',
       message: err
     };

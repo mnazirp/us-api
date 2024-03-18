@@ -1,17 +1,13 @@
 require('dotenv').config();
 const nano = require('nano');
 
-try {
-  const couch = nano({
-    url: process.env.DOCS_MASTER,
-    requestDefaults: {
-      rejeceUnauthorized: false
-    }
-  });
-  const contex = 'couchdb'
-} catch (err) {
-  console.log(err);
-}
+const couch = nano({
+  url: process.env.DOCS_MASTER_URL,
+  requestDefaults: {
+    rejeceUnauthorized: false
+  }
+});
+const context = 'couchdb'
 
 async function openByID(database, _id) {
   try {
@@ -19,12 +15,17 @@ async function openByID(database, _id) {
     let data = await db.get(_id);
     return {
       success: true,
-      context: contex,
+      context,
       func: 'openByID',
       data
     }
   } catch (err) {
-    throw new Error(err.message);
+    throw {
+      success: false,
+      context,
+      func: 'commands',
+      message: err.toString()
+    };
   }
 }
 
@@ -34,13 +35,18 @@ async function view(database, design, view, params) {
     let data = await db.view(design, view, params);
     return {
       success: true,
-      context: contex,
+      context,
       func: 'view',
       meta: { database, design, view, params },
       data
     }
   } catch (err) {
-    throw new Error(err.message);
+    throw {
+      success: false,
+      context,
+      func: 'commands',
+      message: err.toString()
+    };
   }
 }
 
@@ -50,12 +56,17 @@ async function insert(database, document) {
     let rs = await db.insert(document);
     return {
       success: true,
-      context: contex,
+      context,
       func: 'insert',
       data: rs
     };
   } catch (err) {
-    throw new Error(err.message);
+    throw {
+      success: false,
+      context,
+      func: 'commands',
+      message: err.toString()
+    };
   }
 }
 
@@ -65,12 +76,17 @@ async function bulk(database, documents) {
     let rs = await db.bulk({ docs: documents });
     return {
       success: true,
-      context: contex,
+      context,
       func: 'bulk',
       data: rs
     };
   } catch (err) {
-    throw new Error(err.message);
+    throw {
+      success: false,
+      context,
+      func: 'commands',
+      message: err.toString()
+    };
   }
 }
 
@@ -80,12 +96,17 @@ async function list(database) {
     let data = await db.list({ include_docs: true });
     return {
       success: true,
-      context: contex,
+      context,
       func: 'list',
       data
     }
   } catch (err) {
-    throw new Error(err.message);
+    throw {
+      success: false,
+      context,
+      func: 'commands',
+      message: err.toString()
+    };
   }
 }
 
