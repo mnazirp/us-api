@@ -1,6 +1,6 @@
 const envy = require('@envyjs/node');
 envy.enableTracing({
-  serviceName: process.env.SERVICE_NAME,
+  serviceName: process.env.PM2_SERVICE_NAME,
 });
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 module.exports = {
@@ -44,7 +44,7 @@ module.exports = {
     memoryOnly: { module: 'memory' },
     file: { module: 'localfilesystem' }
   },
-  uiPort: process.env.NODEREDPORT || 1880,
+  uiPort: process.env.PM2_PORT || 1880,
   logging: {
     console: {
       level: "info",

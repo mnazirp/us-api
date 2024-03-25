@@ -1,9 +1,9 @@
 require('dotenv').config();
 const nano = require('nano');
 
-const isHttps = process.env.DOCS_MASTER.includes('https');
+const isHttps = process.env.DOC_MASTER_URL.includes('https');
 /** /extra here for purpose nano can get sub-domain not just domain */
-let fullUrl = (isHttps) ? process.env.DOCS_MASTER + '/extra' : process.env.DOCS_MASTER;
+let fullUrl = (isHttps) ? process.env.DOC_MASTER_URL + '/extra' : process.env.DOC_MASTER_URL;
 const couch = nano({
   url: fullUrl,
   requestDefaults: {
