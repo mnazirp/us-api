@@ -1,20 +1,39 @@
 require('dotenv').config();
 const nano = require('nano');
 
-const isHttps = process.env.DOC_MASTER_URL.includes('https');
-/** /extra here for purpose nano can get sub-domain not just domain */
-let fullUrl = (isHttps) ? process.env.DOC_MASTER_URL + '/extra' : process.env.DOC_MASTER_URL;
-const couch = nano({
-  url: fullUrl,
-  requestDefaults: {
-    rejeceUnauthorized: false
-  }
-});
 const contex = 'couchdb';
+const servers = {
+  master: setConnection(process.env.DOC_MASTER_DOMAIN, process.env.DOC_MASTER_USER, process.env.DOC_MASTER_PASSWORD),
+  bucket: setConnection(process.env.DOC_BUCKET_DOMAIN, process.env.DOC_BUCKET_USER, process.env.DOC_BUCKET_PASSWORD),
+  series: setConnection(process.env.DOC_SERIES_DOMAIN, process.env.DOC_SERIES_USER, process.env.DOC_SERIES_PASSWORD),
+  map: setConnection(process.env.DOC_MAP_DOMAIN, process.env.DOC_MAP_USER, process.env.DOC_MAP_PASSWORD),
+  transaction: setConnection(process.env.DOC_TRANS_DOMAIN, process.env.DOC_TRANS_USER, process.env.DOC_TRANS_PASSWORD),
+};
 
-async function openByID(database, _id) {
+function setConnection(url, username, password) {
+  console.log(url)
+  const isHttps = url.includes('https');
+  /** /extra here for purpose nano can get sub-domain not just domain */
+  let fullUrl = (isHttps) ? url + '/extra' : url;
+  const couch = nano({
+    url: fullUrl,
+    requestDefaults: {
+      rejeceUnauthorized: false,
+      auth: {
+        username,
+        password
+      }
+    }
+  });
+  return {
+    conn: couch,
+    isHttps
+  };
+}
+
+async function openByID(server, database, _id) {
   try {
-    const db = (isHttps) ? couch.server.use(database) : couch.use(database);
+    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.get(_id);
     return {
       success: true,
@@ -27,9 +46,9 @@ async function openByID(database, _id) {
   }
 }
 
-async function view(database, design, view, params) {
+async function view(server, database, design, view, params) {
   try {
-    const db = (isHttps) ? couch.server.use(database) : couch.use(database);
+    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.view(design, view, params);
     return {
       success: true,
@@ -43,9 +62,9 @@ async function view(database, design, view, params) {
   }
 }
 
-async function insert(database, document) {
+async function insert(server, database, document) {
   try {
-    const db = (isHttps) ? couch.server.use(database) : couch.use(database);
+    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let rs = await db.insert(document);
     return {
       success: true,
@@ -58,9 +77,9 @@ async function insert(database, document) {
   }
 }
 
-async function bulk(database, documents) {
+async function bulk(server, database, documents) {
   try {
-    const db = (isHttps) ? couch.server.use(database) : couch.use(database);
+    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let rs = await db.bulk({ docs: documents });
     return {
       success: true,
@@ -73,9 +92,9 @@ async function bulk(database, documents) {
   }
 }
 
-async function list(database) {
+async function list(server, database) {
   try {
-    const db = (isHttps) ? couch.server.use(database) : couch.use(database);
+    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.list({ include_docs: true });
     return {
       success: true,
