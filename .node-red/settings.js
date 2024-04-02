@@ -56,6 +56,12 @@ module.exports = {
   externalModules: {
   },
   editorTheme: {
+    page: {
+      title: process.env.NODERED_PAGE_TITLE,
+    },
+    header: {
+      title: process.env.NODERED_HEADER_TITLE,
+    },
     theme: "midnight-red",
     palette: {},
     projects: {

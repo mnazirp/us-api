@@ -26,7 +26,7 @@ function setConnection(url, username, password) {
     }
   });
   return {
-    conn: couch,
+  conn: couch,
     isHttps
   };
 }
