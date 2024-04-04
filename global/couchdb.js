@@ -11,9 +11,7 @@ const servers = {
 };
 
 function setConnection(url, username, password) {
-  const regex = /\/([^\/]+)\/$/;
-  const match = url.match(regex);
-  const useSubdomain = (match && match[1]) ? true : false
+  const useSubdomain = (url.split('/').length = 4) ? true : false
   /** /extra here for purpose nano can get sub-domain not just domain */
   let fullUrl = (useSubdomain) ? url + '/extra' : url;
   const couch = nano({
