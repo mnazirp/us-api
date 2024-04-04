@@ -11,10 +11,10 @@ const servers = {
 };
 
 function setConnection(url, username, password) {
-  console.log(url)
-  const isHttps = url.includes('https');
+  const regex = /\/([a-zA-Z0-9-]+)\/_/;
+  const useSubdomain = url.match(regex);
   /** /extra here for purpose nano can get sub-domain not just domain */
-  let fullUrl = (isHttps) ? url + '/extra' : url;
+  let fullUrl = (useSubdomain) ? url + '/extra' : url;
   const couch = nano({
     url: fullUrl,
     requestDefaults: {
@@ -27,13 +27,13 @@ function setConnection(url, username, password) {
   });
   return {
   conn: couch,
-    isHttps
+    useSubdomain
   };
 }
 
 async function openByID(server, database, _id) {
   try {
-    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.get(_id);
     return {
       success: true,
@@ -48,7 +48,7 @@ async function openByID(server, database, _id) {
 
 async function view(server, database, design, view, params) {
   try {
-    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.view(design, view, params);
     return {
       success: true,
@@ -64,7 +64,7 @@ async function view(server, database, design, view, params) {
 
 async function insert(server, database, document) {
   try {
-    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let rs = await db.insert(document);
     return {
       success: true,
@@ -79,7 +79,7 @@ async function insert(server, database, document) {
 
 async function bulk(server, database, documents) {
   try {
-    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let rs = await db.bulk({ docs: documents });
     return {
       success: true,
@@ -94,7 +94,7 @@ async function bulk(server, database, documents) {
 
 async function list(server, database) {
   try {
-    const db = (servers[server].isHttps) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
     let data = await db.list({ include_docs: true });
     return {
       success: true,
