@@ -106,10 +106,26 @@ async function list(server, database) {
   }
 }
 
+async function uuids(server, database, count) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.uuids(count);
+    return {
+      success: true,
+      context: contex,
+      func: 'uuids',
+      data
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
 module.exports = {
   openByID,
   view,
   insert,
   bulk,
-  list
+  list,
+  uuids
 }
