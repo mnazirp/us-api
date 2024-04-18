@@ -12,14 +12,6 @@ module.exports = {
     next();
   },
   credentialSecret: false,
-  // adminAuth: require("node-red-auth-github")({
-  //   clientID: process.env.NODERED_CLIENT_ID || "empty-id",
-  //   clientSecret: process.env.NODERED_CLIENT_SECRET || "empty-secret",
-  //   baseURL: process.env.NODERED_BASE_URL,
-  //   users: [
-  //     { username: "mnazirp", permissions: ["*"] },
-  //   ],
-  // }),
   httpNodeCors: {
     origin: "*",
     methods: "GET,PUT,POST,DELETE"
