@@ -24,9 +24,6 @@ function setConnection(url, username, password) {
       }
     }
   });
-
-  let db = couch.use('');
-  db.partitionedList()
   return {
     conn: couch,
     useSubdomain
