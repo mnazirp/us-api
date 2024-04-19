@@ -107,10 +107,10 @@ async function bulk(server, database, documents) {
   }
 }
 
-async function list(server, database) {
+async function list(server, database, incudeDocs = true) {
   try {
     const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
-    let data = await db.list({ include_docs: true });
+    let data = await db.list({ include_docs: incudeDocs });
     return {
       success: true,
       context: contex,
@@ -122,10 +122,10 @@ async function list(server, database) {
   }
 }
 
-async function partitionedList(server, database, partitionKey) {
+async function partitionedList(server, database, partitionKey, includeDocs = true) {
   try {
     const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
-    let data = await db.partitionedList(partitionKey, { include_docs: true });
+    let data = await db.partitionedList(partitionKey, { include_docs: includeDocs });
     return {
       success: true,
       context: contex,
@@ -152,6 +152,21 @@ async function uuids(server, count) {
   }
 }
 
+async function destroy(server, database, _id, _rev) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let rs = await db.destroy(_id, _rev);
+    return {
+      success: true,
+      context: contex,
+      func: 'destroy',
+      data: rs
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
 module.exports = {
   openByID,
   view,
@@ -161,4 +176,5 @@ module.exports = {
   uuids,
   partitionedView,
   partitionedList,
+  destroy
 }
