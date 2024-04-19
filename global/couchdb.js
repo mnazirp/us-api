@@ -24,6 +24,9 @@ function setConnection(url, username, password) {
       }
     }
   });
+
+  let db = couch.use('');
+  db.partitionedList()
   return {
     conn: couch,
     useSubdomain
@@ -53,6 +56,22 @@ async function view(server, database, design, view, params) {
       success: true,
       context: contex,
       func: 'view',
+      meta: { database, design, view, params },
+      data
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function partitionedView(server, database, partitionKey, design, view, params) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.partitionedView(partitionKey, design, view, params);
+    return {
+      success: true,
+      context: contex,
+      func: 'partitionedView',
       meta: { database, design, view, params },
       data
     }
@@ -106,9 +125,24 @@ async function list(server, database) {
   }
 }
 
-async function uuids(server, database, count) {
+async function partitionedList(server, database, partitionKey) {
   try {
     const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.partitionedList(partitionKey, { include_docs: true });
+    return {
+      success: true,
+      context: contex,
+      func: 'partitionedList',
+      data
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function uuids(server, count) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server : servers[server].conn;
     let data = await db.uuids(count);
     return {
       success: true,
@@ -127,5 +161,7 @@ module.exports = {
   insert,
   bulk,
   list,
-  uuids
+  uuids,
+  partitionedView,
+  partitionedList,
 }
