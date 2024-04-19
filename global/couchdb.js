@@ -167,6 +167,10 @@ async function destroy(server, database, _id, _rev) {
   }
 }
 
+function getPartitionName(prefix, key) {
+  return `${prefix}-${key.toLowerCase().replace(/ |_|-/g, "-")}`
+}
+
 module.exports = {
   openByID,
   view,
@@ -176,5 +180,6 @@ module.exports = {
   uuids,
   partitionedView,
   partitionedList,
-  destroy
+  destroy,
+  getPartitionName,
 }
