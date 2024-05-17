@@ -1,4 +1,5 @@
 require('dotenv').config();
+const https = require('https');
 const nano = require('nano');
 
 const contex = 'couchdb';
@@ -14,10 +15,12 @@ function setConnection(url, username, password) {
   const useSubdomain = (url.split('/').length = 4) ? true : false
   /** /extra here for purpose nano can get sub-domain not just domain */
   let fullUrl = (useSubdomain) ? url + '/extra' : url;
+  const isHttps = fullUrl.includes('https');
+  let rejectUnauthorized = (process.env.NODERED_REJECT_UNAUTH && process.env.NODERED_REJECT_UNAUTH == 'true') ? true : false;
   const couch = nano({
     url: fullUrl,
     requestDefaults: {
-      rejeceUnauthorized: false,
+      agent: (isHttps) ? new https.Agent({ rejectUnauthorized }) : null,
       auth: {
         username,
         password
