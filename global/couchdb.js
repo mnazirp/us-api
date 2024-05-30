@@ -27,6 +27,8 @@ function setConnection(url, username, password) {
       }
     }
   });
+  let db = couch.db.use();
+  db.partitionedList()
   return {
     conn: couch,
     useSubdomain
@@ -155,10 +157,10 @@ async function fetch(server, database, params) {
   }
 }
 
-async function list(server, database, incudeDocs = true) {
+async function list(server, database, params) {
   try {
     const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
-    let data = await db.list({ include_docs: incudeDocs });
+    let data = await db.list(params);
     return {
       success: true,
       context: contex,
@@ -170,10 +172,10 @@ async function list(server, database, incudeDocs = true) {
   }
 }
 
-async function partitionedList(server, database, partitionKey, includeDocs = true) {
+async function partitionedList(server, database, partitionKey, params) {
   try {
     const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
-    let data = await db.partitionedList(partitionKey, { include_docs: includeDocs });
+    let data = await db.partitionedList(partitionKey, params);
     return {
       success: true,
       context: contex,
