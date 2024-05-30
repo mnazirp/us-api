@@ -79,6 +79,36 @@ async function partitionedView(server, database, partitionKey, design, view, par
     throw new Error(err.message);
   }
 }
+async function find(server, database, query) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.find(query);
+    return {
+      success: true,
+      context: contex,
+      func: 'find',
+      meta: { database, design, view, params },
+      data
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+async function partitionedFind(server, database, partitionKey, query) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.partitionedFind(partitionKey, query);
+    return {
+      success: true,
+      context: contex,
+      func: 'partitionedFind',
+      meta: { database, design, view, params },
+      data
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
 
 async function insert(server, database, document) {
   try {
@@ -105,6 +135,21 @@ async function bulk(server, database, documents) {
       func: 'bulk',
       data: rs
     };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+async function fetch(server, database, params) {
+  try {
+    const db = (servers[server].useSubdomain) ? servers[server].conn.server.use(database) : servers[server].conn.use(database);
+    let data = await db.fetch(params);
+    return {
+      success: true,
+      context: contex,
+      func: 'fetch',
+      data
+    }
   } catch (err) {
     throw new Error(err.message);
   }
@@ -179,10 +224,13 @@ module.exports = {
   view,
   insert,
   bulk,
+  fetch,
   list,
   uuids,
   partitionedView,
   partitionedList,
+  find,
+  partitionedFind,
   destroy,
   getPartitionName,
 }
