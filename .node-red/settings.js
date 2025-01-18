@@ -1,4 +1,7 @@
 const envy = require('@envyjs/node');
+const { InfluxDB, flux, Point } = require('@influxdata/influxdb-client');
+const { BucketsAPI } = require('@influxdata/influxdb-client-apis');
+
 envy.enableTracing({
   serviceName: process.env.PM2_SERVICE_NAME,
 });
@@ -79,6 +82,10 @@ module.exports = {
     worker: require('worker_threads'),
     zlib: require('zlib'),
     nano: require('nano'),
+    InfluxDB,
+    Point,
+    flux,
+    BucketsAPI
   },
   debugMaxLength: 1000,
   mqttReconnectTime: 15000,
